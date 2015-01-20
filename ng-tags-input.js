@@ -56,12 +56,13 @@ function makeObjectArray(array, key) {
     return array;
 }
 
-function findInObjectArray(array, obj, key) {
+function findInObjectArray(array, obj, key, caseInsesitive) {
     var item = null;
     for (var i = 0; i < array.length; i++) {
-        // I'm aware of the internationalization issues regarding toLowerCase()
-        // but I couldn't come up with a better solution right now
-        if (safeToString(array[i][key]).toLowerCase() === safeToString(obj[key]).toLowerCase()) {
+        if(caseInsesitive && safeToString(array[i][key]) === safeToString(obj[key])) {
+            item = array[i];
+            break;
+        } else if(!caseInsesitive && safeToString(array[i][key]).toLocaleLowerCase() === safeToString(obj[key]).toLocaleLowerCase()) {
             item = array[i];
             break;
         }
@@ -122,6 +123,7 @@ var tagsInput = angular.module('ngTagsInput', []);
  * @param {boolean=} [addFromAutocompleteOnly=false] Flag indicating that only tags coming from the autocomplete list will be allowed.
  *                                                   When this flag is true, addOnEnter, addOnComma, addOnSpace, addOnBlur and
  *                                                   allowLeftoverText values are ignored.
+ * @param {boolean=} [caseInsensitiveTags=false] Flag indicating if tags are case insensitive or not
  * @param {expression} onTagAdded Expression to evaluate upon adding a new tag. The new tag is available as $tag.
  * @param {expression} onTagRemoved Expression to evaluate upon removing an existing tag. The removed tag is available as $tag.
  */
@@ -144,7 +146,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                    tagText.length >= options.minLength &&
                    tagText.length <= options.maxLength &&
                    options.allowedTagsPattern.test(tagText) &&
-                   !findInObjectArray(self.items, tag, options.displayProperty);
+                   !findInObjectArray(self.items, tag, options.displayProperty, options.caseInsensitiveTags);
         };
 
         self.items = [];
@@ -234,7 +236,8 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 maxTags: [Number, MAX_SAFE_INTEGER],
                 displayProperty: [String, 'text'],
                 allowLeftoverText: [Boolean, false],
-                addFromAutocompleteOnly: [Boolean, false]
+                addFromAutocompleteOnly: [Boolean, false],
+                caseInsesitiveTags: [Boolean, false]
             });
 
             $scope.tagList = new TagList($scope.options, $scope.events);
