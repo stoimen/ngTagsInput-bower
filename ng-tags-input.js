@@ -237,7 +237,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 displayProperty: [String, 'text'],
                 allowLeftoverText: [Boolean, false],
                 addFromAutocompleteOnly: [Boolean, false],
-                caseInsesitiveTags: [Boolean, false]
+                caseInsensitiveTags: [Boolean, false]
             });
 
             $scope.tagList = new TagList($scope.options, $scope.events);
