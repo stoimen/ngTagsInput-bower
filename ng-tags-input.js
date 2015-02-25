@@ -115,6 +115,7 @@ var tagsInput = angular.module('ngTagsInput', []);
  * @param {boolean=} [addOnSpace=false] Flag indicating that a new tag will be added on pressing the SPACE key.
  * @param {boolean=} [addOnComma=true] Flag indicating that a new tag will be added on pressing the COMMA key.
  * @param {boolean=} [addOnBlur=true] Flag indicating that a new tag will be added when the input field loses focus.
+ * @param {boolean=} [removeOnBackspace=true] Flag indicating that last tag should be deleted on backspace pressed
  * @param {boolean=} [replaceSpacesWithDashes=true] Flag indicating that spaces will be replaced with dashes.
  * @param {string=} [allowedTagsPattern=.+] Regular expression that determines whether a new tag is valid.
  * @param {boolean=} [enableEditingLastTag=false] Flag indicating that the last tag will be moved back into
@@ -230,6 +231,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                 addOnSpace: [Boolean, false],
                 addOnComma: [Boolean, true],
                 addOnBlur: [Boolean, true],
+                removeOnBackspace: [Boolean, true],
                 allowedTagsPattern: [RegExp, /.+/],
                 enableEditingLastTag: [Boolean, false],
                 minTags: [Number, 0],
@@ -366,7 +368,7 @@ tagsInput.directive('tagsInput', ["$timeout","$document","tagsInputConfig", func
                     addKeys[KEYS.space] = options.addOnSpace;
 
                     shouldAdd = !options.addFromAutocompleteOnly && addKeys[key];
-                    shouldRemove = !shouldAdd && key === KEYS.backspace && scope.newTag.text.length === 0;
+                    shouldRemove = options.removeOnBackspace && !shouldAdd && key === KEYS.backspace && scope.newTag.text.length === 0;
 
                     if (shouldAdd) {
                         tagList.addText(scope.newTag.text);
